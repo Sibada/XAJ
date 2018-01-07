@@ -28,11 +28,11 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
 
   double SM = parameters[7];        // 8.  Areal mean free water capacity of the surface soil layer
   double EX = parameters[8];        // 9.  Exponent of the free water capacity curve
-  double KG = parameters[9];        // 10. outflow coefficients of the free water storage to interflow
-  double KI = parameters[10];       // 11. outflow coefficients of the free water storage to groundwater
+  double KI = parameters[9];        // 10. outflow coefficients of the free water storage to groundwater
+  double KG = parameters[10];       // 11. outflow coefficients of the free water storage to interflow
 
-  double CG = parameters[11];       // 12. recession constant of the lower interflow storage
-  double CI = parameters[12];       // 13. recession constant of groundwater storage
+  double CI = parameters[11];       // 12. recession constant of groundwater storage
+  double CG = parameters[12];       // 13. recession constant of the lower interflow storage
 
   double Area = parameters[13];     // Basin area (km^2)
 

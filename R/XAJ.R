@@ -12,7 +12,10 @@ NULL
 #'             or potential evapotranspiration (daily), length must
 #'             equal to \code{PREC}
 #' @param params Parameters (see below)
-#' @param UH Unit hydrographs for routing of surface runoff.
+#' @param pIUH Parameters of instantaneous unit hydrograph (IUH) by Nash
+#'             for routing of surface runoff.
+#' @param UH Unit hydrograph for routing of surface runoff. Provided
+#'           when not use parameters of IUH.
 #'
 #' @details This function is an R implementation of the Xinanjiang (XAJ)
 #'          hydrological model. The lumped XAJ model has 13 parameters, including:
@@ -35,13 +38,13 @@ NULL
 #'
 #'          EX,   Exponent of the free water capacity curve
 #'
-#'          KG,   outflow coefficients of the free water storage to interflow
+#'          KI,   outflow coefficients of the free water storage to interflow
 #'
-#'          KI,   outflow coefficients of the free water storage to groundwater
+#'          KG,   outflow coefficients of the free water storage to groundwater
 #'
-#'          CG,   recession constant of the lower interflow storage
+#'          CI,   recession constant of the lower interflow storage
 #'
-#'          CI,   recession constant of groundwater storage
+#'          CG,   recession constant of groundwater storage
 #'
 #'          Area of the basin also necessary. The parameter \code{params} must
 #'          be a numeric vector looks like:
@@ -50,6 +53,15 @@ NULL
 #'
 #'          Each parameter in the vector must in this order. Basin area (km^2)
 #'          is attached to the end of the vector.
+#'
+#'          \code{pIUH} provides the two meters, i.e. N and NK to calculate the
+#'          instantaneous unit hydrograph (IUH) by Nash for routing of surface
+#'          runoff. \code{pIUH} must looks like: \code{c(N, NK)}.
+#'
+#'          N means number of reservoirs in the instantaneous unit hydrograph,
+#'          while NK means common storage coefficient in the instantaneous unit
+#'          hydrograph. N and NK might also be the model parameters to be
+#'          calibrate.
 #'
 #' @return This function returns a data frame of some common variables of the XAJ
 #'         model at each time step, such as evaporation, soil moisture, surface
@@ -94,9 +106,24 @@ NULL
 #'             Watershed Hydrology, Water Resources Publication, Highlands
 #'             Ranch, CO (1995), pp. 215-232
 #' @export
-XAJ <- function(PREC, EVAP, params, UH) {
+XAJ <- function(PREC, EVAP, params, pIUH = c(3, 6), UH = NULL) {
+  # Create instantaneous unit hydrograph (IUH) by parameters of IUH (pIUH)
+  # when UH is not provided.
+  if(is.null(UH) || !is.numeric(UH))
+    UH <- IUH(pIUH[1], pIUH[2], 20)
+
+  # Run XAJ model.
   out <- data.frame(XAJrun(PREC, EVAP, params, UH))
   names(out) <- c("E", "EU", "EL", "ED", "W", "WU", "WL", "WD",
                   "R", "RS", "RI", "RG", "Q", "QS", "QI", "QG")
   out
+}
+
+# Create IUH
+IUH <- function(N, NK, len) {
+  UH <- pgamma(seq(0, 100, length.out = len + 1),
+               N, scale = NK)
+  UH <- diff(UH)
+  UH <- UH/sum(UH)
+  UH
 }

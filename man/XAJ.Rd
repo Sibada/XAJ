@@ -4,7 +4,7 @@
 \alias{XAJ}
 \title{Run Xinanjiang (XAJ) model (three sources, lumped).}
 \usage{
-XAJ(PREC, EVAP, params, UH)
+XAJ(PREC, EVAP, params, pIUH = c(3, 6), UH = NULL)
 }
 \arguments{
 \item{PREC}{Time series of precipitation (daily)}
@@ -15,7 +15,11 @@ equal to \code{PREC}}
 
 \item{params}{Parameters (see below)}
 
-\item{UH}{Unit hydrographs for routing of surface runoff.}
+\item{pIUH}{Parameters of instantaneous unit hydrograph (IUH) by Nash
+for routing of surface runoff.}
+
+\item{UH}{Unit hydrograph for routing of surface runoff. Provided
+when not use parameters of IUH.}
 }
 \value{
 This function returns a data frame of some common variables of the XAJ
@@ -82,13 +86,13 @@ This function is an R implementation of the Xinanjiang (XAJ)
 
          EX,   Exponent of the free water capacity curve
 
-         KG,   outflow coefficients of the free water storage to interflow
+         KI,   outflow coefficients of the free water storage to interflow
 
-         KI,   outflow coefficients of the free water storage to groundwater
+         KG,   outflow coefficients of the free water storage to groundwater
 
-         CG,   recession constant of the lower interflow storage
+         CI,   recession constant of the lower interflow storage
 
-         CI,   recession constant of groundwater storage
+         CG,   recession constant of groundwater storage
 
          Area of the basin also necessary. The parameter \code{params} must
          be a numeric vector looks like:
@@ -97,6 +101,15 @@ This function is an R implementation of the Xinanjiang (XAJ)
 
          Each parameter in the vector must in this order. Basin area (km^2)
          is attached to the end of the vector.
+
+         \code{pIUH} provides the two meters, i.e. N and NK to calculate the
+         instantaneous unit hydrograph (IUH) by Nash for routing of surface
+         runoff. \code{pIUH} must looks like: \code{c(N, NK)}.
+
+         N means number of reservoirs in the instantaneous unit hydrograph,
+         while NK means common storage coefficient in the instantaneous unit
+         hydrograph. N and NK might also be the model parameters to be
+         calibrate.
 }
 \references{
 Zhao and Liu, 1995. The Xinanjiang model, Computer Models of
