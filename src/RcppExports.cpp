@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// aux_Lohmann_conv
+NumericVector aux_Lohmann_conv(NumericMatrix tmpm);
+RcppExport SEXP _XAJ_aux_Lohmann_conv(SEXP tmpmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type tmpm(tmpmSEXP);
+    rcpp_result_gen = Rcpp::wrap(aux_Lohmann_conv(tmpm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // XAJrun
 List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters, NumericVector UH);
 RcppExport SEXP _XAJ_XAJrun(SEXP PRECSEXP, SEXP EVAPSEXP, SEXP parametersSEXP, SEXP UHSEXP) {
@@ -21,6 +32,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_XAJ_aux_Lohmann_conv", (DL_FUNC) &_XAJ_aux_Lohmann_conv, 1},
     {"_XAJ_XAJrun", (DL_FUNC) &_XAJ_XAJrun, 4},
     {NULL, NULL, 0}
 };

@@ -49,7 +49,7 @@ NULL
 #'          Area of the basin also necessary. The parameter \code{params} must
 #'          be a numeric vector looks like:
 #'
-#'          \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KG, KI, CG, CI, Area)}
+#'          \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KI, KG, CI, CG, Area)}
 #'
 #'          Each parameter in the vector must in this order. Basin area (km^2)
 #'          is attached to the end of the vector.
@@ -127,3 +127,26 @@ IUH <- function(N, NK, len) {
   UH <- UH/sum(UH)
   UH
 }
+
+#' Get upper and lower boundary of the parameters of XAJ model.
+#'
+#' @description Get upper and lower boundary of the parameters of XAJ model.
+#'              Meaning of the parameters see `?XAJ`.
+#'
+#' @export
+XAJ_param_range <- function() {
+  prng <- data.frame(
+    lower     = c(0.20, 0.00,   5.0,  60.0,  10.0, 0.05, 0.1, 10.0, 0.50, 0.01, 0.01, 0.50, 0.95, 0.1, 1.0),
+    upper     = c(1.50, 0.05,   20.,  90.0,  60.0, 0.20, 0.6, 60.0, 2.00, 0.70, 0.70, 0.90, 0.998,1.0, 6.0),
+    row.names = c('KC', 'IM', 'WUM', 'WLM', 'WDM', 'C', 'B', 'SM', 'EX', 'KI', 'KG', 'CI', 'CG', 'N', 'NK')
+  )
+  prng
+}
+
+#par(mar=c(5,5,4,5) + 0.1)
+#bar <- barplot(prec[-(1:365)], axes=F, ylim=c(35,0), col="grey",
+#               border=NA, xaxs="i", yaxs="i", space=0)
+#axis(4)
+#par(new = T)
+#plot(ds, tmp$Q,ylim=c(0,1.3), xlab="", ylab="Streamflow", type="l", xaxs="i", yaxs="i")
+#mtext("Precipitation",side=4,line=3)

@@ -97,7 +97,7 @@ This function is an R implementation of the Xinanjiang (XAJ)
          Area of the basin also necessary. The parameter \code{params} must
          be a numeric vector looks like:
 
-         \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KG, KI, CG, CI, Area)}
+         \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KI, KG, CI, CG, Area)}
 
          Each parameter in the vector must in this order. Basin area (km^2)
          is attached to the end of the vector.

@@ -80,20 +80,19 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
   double EL = 0.;   // Evap at lower soil layer
   double ED = 0.;   // Evap at deep soil layer
 
-  double S = 0.;
   double FR = 0.;
   double AU = 0.;
-  double WU = WUM / 2.;     // Soil moisture (mm) of upper layer
+  double WU = WUM *0.8;     // Soil moisture (mm) of upper layer
   double WL = WLM * 0.8;    // Soil moisture (mm) of lower layer
-  double WD = WDM * 1.0;    // Soil moisture (mm) of deep layer
+  double WD = WDM * 0.8;    // Soil moisture (mm) of deep layer
   double W = WU + WL + WD;  // Soil moisture (mm) of all layer
 
   double INUL;  // Infiltration from upper layer to lower layer
   double INLD;  // Infiltration from lower layer to deep layer
-  double So = 5.0;
+  double S = SM * 0.2;
 
   double MS = SM * (1. + EX);
-  double FRo = 1 - pow((1. - So / MS), EX);
+  double tmpA = 0.; // temporary variable in calculation of free water
 
   /** ************************************************************************
    * Runoff yield
@@ -183,38 +182,37 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
       }
     }
     W = WU + WL + WD;
-    R += RB;
+    R_s[i] = R;
 
     // Runoff source division
     if (PE > 0.)
     {
-      FR = (R - RB) / PE;
-      AU = MS * (1 - pow((1 - So * FRo / FR / SM), 1 / (1 + EX)));
-      if (PE + AU < MS)
-        RS = FR * (PE + So * FRo / FR - SM + SM * pow((1 - (PE + AU) / MS), 1 + EX));
-      else
-        RS = FR * (PE + So * FRo / FR - SM);
-      S = So * FRo / FR + (R - RS) / FR;
+      FR = R / PE;
+      AU = MS * (1 - pow((1 - S / SM), 1 / (1 + EX)));
+      if (PE + AU < MS) {
+        tmpA = SM * pow((1 - (PE + AU) / MS), 1 + EX);
+      } else {
+        tmpA = 0.;
+      }
+      RS = FR * (PE + S - SM + tmpA);
+      S = SM - tmpA;
       RI = FR * KI * S;
       RG = FR * KG * S;
+      S = S * (1 - KI - KG);
       RS += RB;
-      R = RS + RI + RG;
-      So = S * (1 - KI - KG);
-      FRo = FR;
-    }
-    else
-    {
-      S = So;
-      FR = 1 - pow((1 - S / MS), EX);
-      RI = 0.00;
-      RG = 0.00;
-      So = S * (1 - KI - KG);
+
+    } else {
+      FR = 1 - pow((1 - W / WM), B/(1+B));
+      RI = FR * KI * S;
+      RG = FR * KG * S;
+      S = S * (1 - KI - KG);
       RS = RB;
-      R = RS + RI + RG;
-      FRo = FR;
     }
+    // Rcout << i << '\t' << FR<< '\t' << RS << '\t' << RI<<'\t' << RG << '\n'; // !
+    R = RS + RI + RG;
 
     /** Save process variables */
+
     RS_s[i] = RS;  // Surface runoff (mm) of each time step
     RI_s[i] = RI;  // Interflow (mm) of each time step
     RG_s[i] = RG;  // Underground runoff (mm) of each time step
@@ -227,11 +225,6 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
     WU_s[i] = WU;
     WL_s[i] = WL;
     WD_s[i] = WD;
-    R_s[i] = R;
-    RS_s[i] = RS;
-    RG_s[i] = RG;
-    RI_s[i] = RI;
-
   }
 
   /***************************************************************************
