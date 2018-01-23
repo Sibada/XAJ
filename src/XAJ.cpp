@@ -7,7 +7,7 @@ using namespace Rcpp;
 // Run Xinanjiang model
 // [[Rcpp::export]]
 List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
-            NumericVector UH)
+            NumericVector UH, double Area, double dt)
 {
 
   /* **************************************************************************
@@ -33,8 +33,6 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
 
   double CI = parameters[11];       // 12. recession constant of groundwater storage
   double CG = parameters[12];       // 13. recession constant of the lower interflow storage
-
-  double Area = parameters[13];     // Basin area (km^2)
 
   double WM = WUM + WLM + WDM;      // Mean water sotrage of the basin
   double WMM = WM * (1. + B) / (1. - IM); // Maximum water storage in the basin
@@ -62,8 +60,7 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
   NumericVector QI_s(nrecs, 0.);  // Interflow runoff (m^3/s) at the outlet of the basin
   NumericVector QG_s(nrecs, 0.);  // Underground runoff (m^3/s) at the outlet of the basin
 
-  double DeltaT = 24.;    // Hours per time step
-  double U = Area/3.6/DeltaT; // Convert runoff from mm to m^3/s
+  double U = Area/3.6/dt; // Convert runoff from mm to m^3/s
 
   // Model state variables for each step
   double PE = 0.;  // net prec when > 0; insu evap when < 0

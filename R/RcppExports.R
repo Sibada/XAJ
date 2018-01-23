@@ -5,7 +5,7 @@ aux_Lohmann_conv <- function(tmpm) {
     .Call('_XAJ_aux_Lohmann_conv', PACKAGE = 'XAJ', tmpm)
 }
 
-XAJrun <- function(PREC, EVAP, parameters, UH) {
-    .Call('_XAJ_XAJrun', PACKAGE = 'XAJ', PREC, EVAP, parameters, UH)
+XAJrun <- function(PREC, EVAP, parameters, UH, Area, dt) {
+    .Call('_XAJ_XAJrun', PACKAGE = 'XAJ', PREC, EVAP, parameters, UH, Area, dt)
 }
 

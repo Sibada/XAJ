@@ -6,7 +6,7 @@
 \alias{XAJ-package}
 \title{XAJ: An R implementation of three-source Xinanjiang model by Renjun Zhao.}
 \usage{
-XAJ(PREC, EVAP, params, pIUH = c(3, 6), UH = NULL)
+XAJ(PREC, EVAP, params, area, dt = 24, full.UH = FALSE)
 }
 \arguments{
 \item{PREC}{Time series of precipitation (daily)}
@@ -17,11 +17,11 @@ equal to \code{PREC}}
 
 \item{params}{Parameters (see below)}
 
-\item{pIUH}{Parameters of instantaneous unit hydrograph (IUH) by Nash
-for routing of surface runoff.}
+\item{area}{Basin area.}
 
-\item{UH}{Unit hydrograph for routing of surface runoff. Provided
-when not use parameters of IUH.}
+\item{full.UH}{Use the unit hydrograph defined by user, rather than the
+instantaneous unit hydrograph (IUH) of Nash, for routing
+of surface runoff. Default FALSE.}
 }
 \value{
 This function returns a data frame of some common variables of the XAJ
@@ -98,22 +98,25 @@ This function is an R implementation of the Xinanjiang (XAJ)
 
          CG,   recession constant of groundwater storage
 
-         Area of the basin also necessary. The parameter \code{params} must
-         be a numeric vector looks like:
+         If use the instantaneous unit hydrograph (IUH) of Nash for routing
+         of surface runoff, should provided two other parameters:
 
-         \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KI, KG, CI, CG, Area)}
+         N,    number of reservoirs in the instantaneous unit hydrograph
 
-         Each parameter in the vector must in this order. Basin area (km^2)
-         is attached to the end of the vector.
+         NK,   common storage coefficient in the instantaneous unit hydrograph
 
-         \code{pIUH} provides the two meters, i.e. N and NK to calculate the
-         instantaneous unit hydrograph (IUH) by Nash for routing of surface
-         runoff. \code{pIUH} must looks like: \code{c(N, NK)}.
+         Else should provided the whole unit hydrograph defined by user,
+         and set \code{full.UH} become \code{TRUE}.
 
-         N means number of reservoirs in the instantaneous unit hydrograph,
-         while NK means common storage coefficient in the instantaneous unit
-         hydrograph. N and NK might also be the model parameters to be
-         calibrate.
+         The parameter \code{params} must be a numeric vector looks like:
+
+         \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KI, KG, CI, CG, N, NK)}
+
+         when use the instantaneous unit hydrograph of Nash, or looks like:
+
+         \code{c(KC, IM, WUM, WLM, WDM, C, B, SM, EX, KI, KG, CI, CG, UH_1, UH_2, ..., UH_n)}
+
+         UH_1, UH_2, ..., UH_n means the series of the unit hydrograph.
 }
 \references{
 Zhao and Liu, 1995. The Xinanjiang model, Computer Models of Watershed Hydrology, Water Resources Publication, Highlands Ranch, CO (1995), pp. 215-232

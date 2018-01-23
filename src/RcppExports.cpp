@@ -17,8 +17,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // XAJrun
-List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters, NumericVector UH);
-RcppExport SEXP _XAJ_XAJrun(SEXP PRECSEXP, SEXP EVAPSEXP, SEXP parametersSEXP, SEXP UHSEXP) {
+List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters, NumericVector UH, double Area, double dt);
+RcppExport SEXP _XAJ_XAJrun(SEXP PRECSEXP, SEXP EVAPSEXP, SEXP parametersSEXP, SEXP UHSEXP, SEXP AreaSEXP, SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,14 +26,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type EVAP(EVAPSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type parameters(parametersSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type UH(UHSEXP);
-    rcpp_result_gen = Rcpp::wrap(XAJrun(PREC, EVAP, parameters, UH));
+    Rcpp::traits::input_parameter< double >::type Area(AreaSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    rcpp_result_gen = Rcpp::wrap(XAJrun(PREC, EVAP, parameters, UH, Area, dt));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_XAJ_aux_Lohmann_conv", (DL_FUNC) &_XAJ_aux_Lohmann_conv, 1},
-    {"_XAJ_XAJrun", (DL_FUNC) &_XAJ_XAJrun, 4},
+    {"_XAJ_XAJrun", (DL_FUNC) &_XAJ_XAJrun, 6},
     {NULL, NULL, 0}
 };
 
