@@ -4,13 +4,14 @@ Title: An R implementation of three-source Xinanjiang model by Renjun Zhao
 Version: 0.0.1
 Date: 2018-01-06
 Authors@R: person("Ruida", "Zhong", email = "zrd2017@163.com", role = c("aut", "cre"))
-Description: 
+Description:
         An R implementation of three-source Xinanjiang model by Renjun Zhao.
         Using precipitation and evaporation data for daily streamflow simulation.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Imports:
-        Rcpp (>= 0.12.13)
+        Rcpp (>= 0.12.13),
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
+Suggests: mco

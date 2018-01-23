@@ -82,7 +82,7 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
 
   double FR = 0.;
   double AU = 0.;
-  double WU = WUM *0.8;     // Soil moisture (mm) of upper layer
+  double WU = WUM * 0.8;     // Soil moisture (mm) of upper layer
   double WL = WLM * 0.8;    // Soil moisture (mm) of lower layer
   double WD = WDM * 0.8;    // Soil moisture (mm) of deep layer
   double W = WU + WL + WD;  // Soil moisture (mm) of all layer
@@ -141,6 +141,7 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
     }
     else
     {
+      /**  Use soil water capacity curve to cal change of soil watet change */
       A = WMM * (1 - pow((1.0 - W / WM), 1. / (1. + B)));
 
       // Depth of soil moisture + net prec < maximum soil water storage
@@ -184,7 +185,7 @@ List XAJrun(NumericVector PREC, NumericVector EVAP, NumericVector parameters,
     W = WU + WL + WD;
     R_s[i] = R;
 
-    // Runoff source division
+    /**  Runoff source division */
     if (PE > 0.)
     {
       FR = R / PE;

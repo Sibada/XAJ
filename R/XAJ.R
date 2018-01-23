@@ -1,7 +1,32 @@
+#' XAJ: An R implementation of three-source Xinanjiang model by Renjun Zhao.
+#'
+#'
+#' @name XAJ
+#' @aliases XAJ-package
+#' @docType package
+#' @references Zhao and Liu, 1995. The Xinanjiang model, Computer Models of Watershed Hydrology, Water Resources Publication, Highlands Ranch, CO (1995), pp. 215-232
+#' @keywords Xinanjiang hydrological model
+
 #' @useDynLib XAJ
 #' @importFrom Rcpp sourceCpp
 NULL
 
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+
+  param.names = c('KC', 'IM', 'WUM', 'WLM', 'WDM', 'C', 'B', 'SM', 'EX', 'KI', 'KG', 'CI', 'CG', 'N', 'NK')
+  xaj.opts <- list(
+    XAJ.param.range = data.frame(
+      lower     = c(0.20, 0.00,   5.0,  10.0,  10.0, 0.05, 0.1, 10.0, 0.50, 0.01, 0.01, 0.50, 0.95, 0.1, 1.0),
+      upper     = c(1.50, 0.05,   20.,  90.0,  60.0, 0.20, 0.6, 60.0, 2.00, 0.70, 0.70, 0.90, 0.998,5.0, 6.0),
+      row.names = param.names
+    ),
+    XAJ.param.names = param.names
+  )
+
+  toset <- !(names(xaj.opts) %in% names(op))
+  if(any(toset)) options(xaj.opts[toset])
+}
 
 #' Run Xinanjiang (XAJ) model (three sources, lumped).
 #'
@@ -121,7 +146,7 @@ XAJ <- function(PREC, EVAP, params, pIUH = c(3, 6), UH = NULL) {
 
 # Create IUH
 IUH <- function(N, NK, len) {
-  UH <- pgamma(seq(0, 100, length.out = len + 1),
+  UH <- pgamma(seq(0, 168, length.out = len + 1),
                N, scale = NK)
   UH <- diff(UH)
   UH <- UH/sum(UH)
@@ -131,16 +156,22 @@ IUH <- function(N, NK, len) {
 #' Get upper and lower boundary of the parameters of XAJ model.
 #'
 #' @description Get upper and lower boundary of the parameters of XAJ model.
+#'              Calibration of XAJ model patameters would follow by those ranges.
 #'              Meaning of the parameters see `?XAJ`.
 #'
 #' @export
 XAJ_param_range <- function() {
-  prng <- data.frame(
-    lower     = c(0.20, 0.00,   5.0,  60.0,  10.0, 0.05, 0.1, 10.0, 0.50, 0.01, 0.01, 0.50, 0.95, 0.1, 1.0),
-    upper     = c(1.50, 0.05,   20.,  90.0,  60.0, 0.20, 0.6, 60.0, 2.00, 0.70, 0.70, 0.90, 0.998,1.0, 6.0),
-    row.names = c('KC', 'IM', 'WUM', 'WLM', 'WDM', 'C', 'B', 'SM', 'EX', 'KI', 'KG', 'CI', 'CG', 'N', 'NK')
-  )
-  prng
+  options('XAJ.param.range')[[1]]
+}
+
+#' Set the names of the parameters.
+#' @description Set the names of the parameters to output so that to
+#'              see what parameter the parameters are.
+#' @param params The vector of the XAJ parameters
+#'
+#' @export
+name_params <- function(params) {
+  c(params, names = options('XAJ.param.names')[[1]])
 }
 
 #par(mar=c(5,5,4,5) + 0.1)
@@ -150,3 +181,5 @@ XAJ_param_range <- function() {
 #par(new = T)
 #plot(ds, tmp$Q,ylim=c(0,1.3), xlab="", ylab="Streamflow", type="l", xaxs="i", yaxs="i")
 #mtext("Precipitation",side=4,line=3)
+
+

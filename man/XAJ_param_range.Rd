@@ -8,6 +8,7 @@ XAJ_param_range()
 }
 \description{
 Get upper and lower boundary of the parameters of XAJ model.
+             Calibration of XAJ model patameters would follow by those ranges.
              Meaning of the parameters see `?XAJ`.
 }
 

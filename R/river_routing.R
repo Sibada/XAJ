@@ -1,22 +1,4 @@
 
-#' Convolution of the distributed Xinanjiang model output by the routing
-#' model of Lohman et al.
-#'
-#' @description Convolution of the distributed Xinanjiang model output by
-#'              the routing model of Lohman et al.
-#' @param Qs Runoff time series of each subbasins.
-#' @param uh Unit hydrographs of Lohman model of each subbasins.
-#'
-#' @return The routing result of the XAJ output, that is, the time series
-#'         of the streamflow at the outlet of the river.
-#'
-#' @export
-
-Lohmann_conv <- function(Qs, uh) {
-  tmpQ <- Qs %*% t(uh)
-  Q <- aux_Lohmann_conv(tmpQ)
-  Q
-}
 
 #' Conver flow direction ascii grid to river table.
 #' @description Conver flow direction ascii grid to rivers.
@@ -89,6 +71,13 @@ dir2river <- function(dir.file, grid.loc, arcinfo = TRUE) {
   return(out)
 }
 
+# ############################################################################.
+# ############################################################################.
+#                          Lohmann routing model
+# ############################################################################.
+# ############################################################################.
+
+
 #' Create unit hydrograph matrix of the Lohmann routing model.
 #'
 #' @description Create unit hydrograph matrix of the Lohmann
@@ -114,7 +103,7 @@ Lohmann_uh <- function(river, stn_loc, v = 1.5, diff = 800) {
   sbs <- river[river[,3] > 0, 3]
   for(i in sbs) {
     og <- which(river[,3] == i)
-    if(state[og] != 0)
+    if(state[i] != 0)
       next
     while(TRUE) {
       state[i] <- 2
@@ -139,7 +128,7 @@ Lohmann_uh <- function(river, stn_loc, v = 1.5, diff = 800) {
 
   # Calculate uh of each channel
   lcuh <- 48
-  h <- sapply(1:ng, function(d) {
+  h <- sapply(1:ng, function(i) {
     d <- river[i, 2]
     if(d < 2500) { # For channels too short
       ih <- c(1., rep(0, lcuh))
@@ -171,6 +160,27 @@ Lohmann_uh <- function(river, stn_loc, v = 1.5, diff = 800) {
   ind <- 0:uhlen * 24
   uh <- sapply(1:uhlen, function(i) colSums(uh[(ind[i]+1):ind[i+1], ]))
   uh <- t(uh)
-
+  uh <- round(uh, 6)
   return(uh)
+}
+
+
+
+#' Convolution of the distributed Xinanjiang model output by the routing
+#' model of Lohman et al.
+#'
+#' @description Convolution of the distributed Xinanjiang model output by
+#'              the routing model of Lohman et al.
+#' @param Qs Runoff time series of each subbasins.
+#' @param uh Unit hydrographs of Lohman model of each subbasins.
+#'
+#' @return The routing result of the XAJ output, that is, the time series
+#'         of the streamflow at the outlet of the river.
+#'
+#' @export
+
+Lohmann_conv <- function(Qs, uh) {
+  tmpQ <- Qs %*% t(uh)
+  Q <- aux_Lohmann_conv(tmpQ)
+  Q
 }
