@@ -140,7 +140,7 @@ XAJ <- function(PREC, EVAP, params, area, dt = 24, full.UH = FALSE) {
     UH <- params[14:length(params)]
   } else {
     # Create instantaneous unit hydrograph (IUH)
-    UH <- IUH(params[14], params[15], 24)
+    UH <- IUH(params[14], params[15])
   }
 
   # Run XAJ model.
@@ -151,9 +151,8 @@ XAJ <- function(PREC, EVAP, params, area, dt = 24, full.UH = FALSE) {
 }
 
 # Create IUH
-IUH <- function(N, NK, len) {
-  UH <- pgamma(seq(0, 100, length.out = len + 1),
-               N, scale = NK)
+IUH <- function(N, NK) {
+  UH <- pgamma(0:96, N, scale = NK)
   UH <- diff(UH)
   UH <- UH/sum(UH)
   UH
